@@ -23,11 +23,16 @@ Usage
 
 import argparse
 import json
+import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import zh  # noqa: E402  Chinese units and rates
+
 WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
 SENT_RE = re.compile(r"[^.!?]+[.!?]*")
+ZH_SENT_RE = re.compile(r"[^。！？!?，,；;]+[。！？!?，,；;]*")   # Chinese chains clauses with ，
 CONCRETE_RE = re.compile(r"\$\s?\d|\b\d[\d,.]*\b|(?<!^)\b[A-Z][a-z]{2,}\b", re.MULTILINE)
 STOPWORDS = {
     "the", "a", "an", "and", "or", "but", "if", "of", "to", "in", "on", "for",
@@ -44,7 +49,20 @@ ABSTRACT_RUN = 3         # beats in a row with nothing checkable in them.
 
 def words(text):
     # "$18,000" is one word when it is spoken, so it is one word here too.
+    # Chinese has no spaces: there a unit is one character, one syllable.
+    if CJK:
+        return zh.units(text)
     return WORD_RE.findall(re.sub(r"(?<=\d),(?=\d)", "", text))
+
+
+CJK = False   # set by analyse() from the script it is given
+
+
+def concrete(text):
+    if CJK:
+        return (len([m for m in zh.NUMBER_RE.finditer(text) if m.group(0).strip()])
+                + len(zh.NAME_RE.findall(text)))
+    return len(CONCRETE_RE.findall(text))
 
 
 def pretty(token):
@@ -68,10 +86,10 @@ def split_beats(raw, wps):
             continue
         # Long paragraph: break it at sentence ends so the timings mean
         # something, and let the report say it was split.
-        parts = [p.strip() for p in SENT_RE.findall(line) if p.strip()]
+        parts = [p.strip() for p in (ZH_SENT_RE if CJK else SENT_RE).findall(line) if p.strip()]
         buf = ""
         for part in parts:
-            candidate = (buf + " " + part).strip()
+            candidate = (buf + ("" if CJK else " ") + part).strip()
             if buf and len(words(candidate)) / wps > MAX_BEAT:
                 beats.append(buf)
                 buf = part
@@ -82,7 +100,13 @@ def split_beats(raw, wps):
     return beats
 
 
-def analyse(raw, wpm=165, target=None):
+def analyse(raw, wpm=None, target=None):
+    global CJK
+    CJK = zh.is_cjk(raw)
+    lang = zh.variety(raw) if CJK else "en"
+    if wpm is None:
+        wpm = zh.RATE[lang] * 60 if CJK else 165
+    unit = "characters" if CJK else "words"
     wps = wpm / 60.0
     beats = split_beats(raw, wps)
     if not beats:
@@ -98,7 +122,7 @@ def analyse(raw, wpm=165, target=None):
             "dur": round(dur, 2),
             "words": n,
             "text": text,
-            "concrete": len(CONCRETE_RE.findall(text)),
+            "concrete": concrete(text),
             "label": "",
             "flags": [],
         })
@@ -119,7 +143,7 @@ def analyse(raw, wpm=165, target=None):
     if rows[0]["dur"] > HOOK_WINDOW:
         rows[0]["flags"].append(f"hook runs {rows[0]['dur']:.1f}s, past the {HOOK_WINDOW:.0f}s mark")
         notes.append(f"Beat 1 takes {rows[0]['dur']:.1f}s to say. Cut it to "
-                     f"{int(HOOK_WINDOW * wps)} words or fewer, or the hook lands after "
+                     f"{int(HOOK_WINDOW * wps)} {unit} or fewer, or the hook lands after "
                      "the decision has been made.")
     if rows[0]["concrete"] == 0:
         notes.append("Beat 1 has no number and no name in it. Hooks without something "
@@ -146,9 +170,12 @@ def analyse(raw, wpm=165, target=None):
             run, start = 0, None
 
     # Does the last line hand you back to the first one?
-    first = {w.lower() for w in words(rows[0]["text"]) if w.lower() not in STOPWORDS}
-    last = {w.lower() for w in words(rows[-1]["text"]) if w.lower() not in STOPWORDS}
-    loop = sorted(pretty(w) for w in first & last)
+    if CJK:
+        loop = sorted(zh.bigrams(rows[0]["text"]) & zh.bigrams(rows[-1]["text"]))
+    else:
+        first = {w.lower() for w in words(rows[0]["text"]) if w.lower() not in STOPWORDS}
+        last = {w.lower() for w in words(rows[-1]["text"]) if w.lower() not in STOPWORDS}
+        loop = sorted(pretty(w) for w in first & last)
     if loop:
         notes.append(f"Loops: the last beat repeats \"{', '.join(loop[:3])}\" from the hook. "
                      "Second watches are free reach.")
@@ -161,23 +188,29 @@ def analyse(raw, wpm=165, target=None):
         if abs(delta) <= target * 0.1:
             notes.append(f"Length is on target ({total:.1f}s against {target}s).")
         elif delta > 0:
-            notes.append(f"{delta:.1f}s over target. Cut about {int(delta * wps)} words.")
+            notes.append(f"{delta:.1f}s over target. Cut about {int(delta * wps)} {unit}.")
         else:
-            notes.append(f"{-delta:.1f}s under target. Either add {int(-delta * wps)} words "
+            notes.append(f"{-delta:.1f}s under target. Either add {int(-delta * wps)} {unit} "
                          "or shoot it short. Short is usually right.")
 
-    return {
+    out = {
         "wpm": wpm, "target": target,
         "total_seconds": round(total, 2),
         "total_words": sum(r["words"] for r in rows),
         "beats": rows,
         "notes": notes,
     }
+    if CJK:
+        out["lang"] = lang
+    return out
 
 
 def render(a, out=sys.stdout):
-    head = (f"BEAT SHEET  ·  {a['total_words']} words  ·  ~{a['total_seconds']:.1f}s "
-            f"at {a['wpm']} wpm" + (f"  ·  target {a['target']}s" if a["target"] else ""))
+    if a.get("lang"):
+        speed = f"{a['total_words']} characters  ·  ~{a['total_seconds']:.1f}s at {a['wpm']:g} syllables/min"
+    else:
+        speed = f"{a['total_words']} words  ·  ~{a['total_seconds']:.1f}s at {a['wpm']} wpm"
+    head = (f"BEAT SHEET  ·  {speed}" + (f"  ·  target {a['target']}s" if a["target"] else ""))
     print("\n" + head, file=out)
     print("=" * max(len(head), 72), file=out)
     for r in a["beats"]:
@@ -194,7 +227,9 @@ def render(a, out=sys.stdout):
 def main():
     ap = argparse.ArgumentParser(description="Time a Reel script into a beat sheet.")
     ap.add_argument("input", nargs="?", default="-", help="script file, or - for stdin")
-    ap.add_argument("--wpm", type=float, default=165, help="speaking rate (default 165)")
+    ap.add_argument("--wpm", type=float, default=None,
+                    help="speaking rate: words per minute for English (default 165), "
+                         "syllables per minute for Chinese (default 270 Mandarin, 258 Cantonese)")
     ap.add_argument("--target", type=float, help="target length in seconds")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()

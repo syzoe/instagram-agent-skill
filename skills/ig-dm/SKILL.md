@@ -14,6 +14,8 @@ Instagram DMs are the only place on the platform where money actually changes
 hands, and they are also where most accounts burn the goodwill their content
 earned. The difference is entirely about who moved first.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 ## The three kinds of DM, and only three are worth writing
 
 **1. The reply to a hand raised.** They commented the keyword, answered the

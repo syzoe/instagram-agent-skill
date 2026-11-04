@@ -39,8 +39,10 @@ WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
 try:                                              # optional: score the hooks too
     sys.path.insert(0, os.path.join(HERE, "..", "ig-reel"))
     from hookscore import run as score_hook       # noqa: E402
+    import zh                                     # noqa: E402
 except Exception:                                 # ig-viral copied on its own
     score_hook = None
+    zh = None
 
 
 def load_formulas(path):
@@ -98,7 +100,8 @@ def analyse(rows, formulas):
         r["baseline"] = base
         r["outlier"] = round(r["views"] / base, 2) if base else None
         r["formula_id"], r["formula"] = classify(r["hook"], formulas)
-        r["words"] = len(WORD_RE.findall(r["hook"]))
+        cjk = zh and zh.is_cjk(r["hook"])          # Chinese: one character, one unit
+        r["words"] = len(zh.units(r["hook"])) if cjk else len(WORD_RE.findall(r["hook"]))
         if score_hook:
             _, overall, verdict, _ = score_hook(r["hook"])
             r["hook_score"], r["hook_verdict"] = round(overall, 1), verdict

@@ -19,7 +19,10 @@ python3 caption.py caption.txt --keywords "client proposals,agency pricing"
 
 It prints the caption the way the feed prints it: the first 125 characters in a
 box, everything else behind the tap. Read that box before you read anything
-else you wrote.
+else you wrote. A Chinese caption is cut by width instead, at about 40
+characters; the tool switches on its own.
+
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
 
 ## First, decide which job this caption has
 

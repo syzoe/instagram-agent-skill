@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "note": "Lexicon used by humanize.py and detect.py. Replacements are plain-English and keep the sentence grammatical. The last block of each list is Instagram-specific: caption and voiceover slop that does not show up on other platforms. Edit freely - it is meant to be yours.",
   "invisible": [
     {
@@ -1021,5 +1021,664 @@
       "name": "Reflex follow or tag bait",
       "fix": "Ask for the one action this post actually earns. The generic ask trains the audience to ignore every ask."
     }
-  ]
+  ],
+  "zh": {
+    "note": "Chinese lexicon (Taiwan Traditional, Hong Kong written and Cantonese, Simplified). Matched as plain substrings, longest first. Sources and the full table with Hong Kong renderings are in docs/asia/chinese.md. Sources agree one hit proves nothing: score clusters, not single words. Entries marked INFERENCE there are judgment calls; edit freely. Entries with \"replace\": null are flagged for a rewrite, never replaced: they are ordinary words in other sentences (解鎖手機, 台南之旅, 感謝家人們).",
+    "phrases": [
+      {
+        "find": "在這個快速變化的時代",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "在这个快速变化的时代",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "喺呢個快速變化嘅時代",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "讓我們一起",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "让我们一起",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "等我哋一齊",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "讓我們深入看看",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "让我们深入看看",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "等我哋深入睇下",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "以下是你需要知道的",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "以下係你要知嘅",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "總而言之",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "总而言之",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "總括嚟講",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "綜上所述",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "综上所述",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "總的來說",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "总的来说",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "值得注意的是",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "值得注意嘅係",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "值得一提的是",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "值得一提嘅係",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "需要指出的是",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "由此可見",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "由此可见",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "不難看出",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "不难看出",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "你可能會問",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "你可能会问",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "讓我們拭目以待",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "让我们拭目以待",
+        "replace": "",
+        "family": "openers"
+      },
+      {
+        "find": "好問題！",
+        "replace": "",
+        "family": "closers"
+      },
+      {
+        "find": "好问题！",
+        "replace": "",
+        "family": "closers"
+      },
+      {
+        "find": "希望這對你有幫助！",
+        "replace": "",
+        "family": "closers"
+      },
+      {
+        "find": "希望这对你有帮助！",
+        "replace": "",
+        "family": "closers"
+      },
+      {
+        "find": "希望幫到你！",
+        "replace": "",
+        "family": "closers"
+      },
+      {
+        "find": "至關重要",
+        "replace": "很重要",
+        "family": "verbs"
+      },
+      {
+        "find": "至关重要",
+        "replace": "很重要",
+        "family": "verbs"
+      },
+      {
+        "find": "意義重大",
+        "replace": "很重要",
+        "family": "verbs"
+      },
+      {
+        "find": "意义重大",
+        "replace": "很重要",
+        "family": "verbs"
+      },
+      {
+        "find": "標誌著",
+        "replace": "代表",
+        "family": "verbs"
+      },
+      {
+        "find": "标志着",
+        "replace": "代表",
+        "family": "verbs"
+      },
+      {
+        "find": "標誌住",
+        "replace": "代表",
+        "family": "verbs"
+      },
+      {
+        "find": "根植於",
+        "replace": "來自",
+        "family": "verbs"
+      },
+      {
+        "find": "植根於",
+        "replace": "來自",
+        "family": "verbs"
+      },
+      {
+        "find": "根植于",
+        "replace": "来自",
+        "family": "verbs"
+      },
+      {
+        "find": "進行優化",
+        "replace": "優化",
+        "family": "verbs"
+      },
+      {
+        "find": "进行优化",
+        "replace": "优化",
+        "family": "verbs"
+      },
+      {
+        "find": "進行討論",
+        "replace": "討論",
+        "family": "verbs"
+      },
+      {
+        "find": "进行讨论",
+        "replace": "讨论",
+        "family": "verbs"
+      },
+      {
+        "find": "賦能",
+        "replace": "幫助",
+        "family": "verbs"
+      },
+      {
+        "find": "赋能",
+        "replace": "帮助",
+        "family": "verbs"
+      },
+      {
+        "find": "助力",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say who helps with what."
+      },
+      {
+        "find": "打造",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what you made or do: 做, 建, 開."
+      },
+      {
+        "find": "解鎖",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what they can now do. (Fine for a phone: 解鎖手機.)"
+      },
+      {
+        "find": "解锁",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what they can now do."
+      },
+      {
+        "find": "顛覆",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what changed."
+      },
+      {
+        "find": "重新定義",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what changed."
+      },
+      {
+        "find": "颠覆",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what changed."
+      },
+      {
+        "find": "重新定义",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what changed."
+      },
+      {
+        "find": "深度解析",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what you explain."
+      },
+      {
+        "find": "深入探討",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what you explain."
+      },
+      {
+        "find": "深入探讨",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what you explain."
+      },
+      {
+        "find": "致力於",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what you do: 我們做…, 我們賣…."
+      },
+      {
+        "find": "致力于",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what you do."
+      },
+      {
+        "find": "全方位的",
+        "replace": null,
+        "family": "adjectives",
+        "why": "List what it covers, or delete."
+      },
+      {
+        "find": "全方位",
+        "replace": null,
+        "family": "adjectives",
+        "why": "List what it covers, or delete."
+      },
+      {
+        "find": "一站式的",
+        "replace": "",
+        "family": "adjectives"
+      },
+      {
+        "find": "一站式",
+        "replace": "",
+        "family": "adjectives"
+      },
+      {
+        "find": "無縫接軌的",
+        "replace": null,
+        "family": "adjectives",
+        "why": "Fine in 天衣無縫; as marketing (無縫體驗) say what is easy."
+      },
+      {
+        "find": "無縫接軌",
+        "replace": null,
+        "family": "adjectives",
+        "why": "Fine in 天衣無縫; as marketing (無縫體驗) say what is easy."
+      },
+      {
+        "find": "无缝衔接的",
+        "replace": null,
+        "family": "adjectives",
+        "why": "Fine in 天衣無縫; as marketing (無縫體驗) say what is easy."
+      },
+      {
+        "find": "無縫的",
+        "replace": null,
+        "family": "adjectives",
+        "why": "Fine in 天衣無縫; as marketing (無縫體驗) say what is easy."
+      },
+      {
+        "find": "無縫",
+        "replace": null,
+        "family": "adjectives",
+        "why": "Fine in 天衣無縫; as marketing (無縫體驗) say what is easy."
+      },
+      {
+        "find": "无缝",
+        "replace": null,
+        "family": "adjectives",
+        "why": "Fine in 天衣無縫; as marketing (無縫體驗) say what is easy."
+      },
+      {
+        "find": "抓手",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say the method."
+      },
+      {
+        "find": "閉環",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say what gets finished."
+      },
+      {
+        "find": "闭环",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say what gets finished."
+      },
+      {
+        "find": "顆粒度",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say which detail."
+      },
+      {
+        "find": "颗粒度",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say which detail."
+      },
+      {
+        "find": "底層邏輯",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say the reason."
+      },
+      {
+        "find": "底层逻辑",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say the reason."
+      },
+      {
+        "find": "乾貨滿滿",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say what the useful thing is."
+      },
+      {
+        "find": "干货满满",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say what the useful thing is."
+      },
+      {
+        "find": "乾貨",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say what the useful thing is."
+      },
+      {
+        "find": "干货",
+        "replace": null,
+        "family": "jargon",
+        "why": "Say what the useful thing is."
+      },
+      {
+        "find": "旅程",
+        "replace": null,
+        "family": "jargon",
+        "why": "Fine for a real trip; as a metaphor (保養旅程) delete it."
+      },
+      {
+        "find": "之旅",
+        "replace": null,
+        "family": "jargon",
+        "why": "Fine for a real trip; as a metaphor (蛻變之旅) delete it."
+      },
+      {
+        "find": "家人們",
+        "replace": null,
+        "family": "instagram",
+        "why": "Fine for your family; as livestream address (家人們！) delete it."
+      },
+      {
+        "find": "家人们",
+        "replace": null,
+        "family": "instagram",
+        "why": "Fine for your family; as livestream address delete it."
+      },
+      {
+        "find": "寶子們",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "宝子们",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "一定要看到最後",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "一定要看到最后",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "一定要睇到最尾",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "絕絕子",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "绝绝子",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "yyds",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "誰懂啊",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "谁懂啊",
+        "replace": "",
+        "family": "instagram"
+      },
+      {
+        "find": "為您賦能",
+        "replace": "幫您",
+        "family": "verbs"
+      },
+      {
+        "find": "為你賦能",
+        "replace": "幫你",
+        "family": "verbs"
+      },
+      {
+        "find": "为您赋能",
+        "replace": "帮您",
+        "family": "verbs"
+      },
+      {
+        "find": "为你赋能",
+        "replace": "帮你",
+        "family": "verbs"
+      },
+      {
+        "find": "助力您",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say who helps with what."
+      },
+      {
+        "find": "助力你",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say who helps with what."
+      },
+      {
+        "find": "為您打造",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what you made for them."
+      },
+      {
+        "find": "为您打造",
+        "replace": null,
+        "family": "verbs",
+        "why": "Say what you made for them."
+      },
+      {
+        "find": "探索",
+        "replace": null,
+        "family": "flag",
+        "why": "Fine for real exploring; as a metaphor say what they do."
+      }
+    ],
+    "structures": [
+      {
+        "id": "zh-not-a-but-b",
+        "regex": "(?:不是|並非|并非)[^，。！？\\n]{1,24}[，,]\\s*而是|唔係[^，。！？\\n]{1,24}[，,]\\s*而係",
+        "name": "不是A，而是B",
+        "fix": "Say B. The A half is a setup nobody asked for."
+      },
+      {
+        "id": "zh-not-only",
+        "regex": "(?:不僅|不仅|不只|不止|唔止)(?:僅|仅)?(?:是|係)?[^。！？\\n]{1,30}[，,]\\s*(?:更|還|还|而且|仲)",
+        "name": "不僅A，更是B",
+        "fix": "Split it, or keep the half with a fact in it."
+      },
+      {
+        "id": "zh-era-opener",
+        "regex": "(?:在這個|在这个|喺呢個)[^，。！？\\n]{0,12}(?:的|嘅)時代|在这个[^，。！？\\n]{0,12}的时代|(?:隨著|随着|隨住)[^，。！？\\n]{0,12}(?:的|嘅)(?:發展|发展)",
+        "name": "在這個…的時代 / 隨著…的發展",
+        "fix": "Delete the opener and start on the claim, or put a date on it."
+      },
+      {
+        "id": "zh-first-second-last",
+        "regex": "首先[^。！？]{1,80}其次[^。！？]{1,80}(?:最後|最后)",
+        "name": "首先…其次…最後",
+        "fix": "Number the points or drop the connectives. Spoken Chinese does not list like a report."
+      },
+      {
+        "id": "zh-rhetorical-qa",
+        "regex": "(?:為什麼|为什么|點解)[？?]\\s*(?:因為|因为)",
+        "name": "為什麼？因為…",
+        "fix": "State the reason. The question is a stage direction."
+      },
+      {
+        "id": "zh-empty-promise",
+        "regex": "無限可能|无限可能|更多可能|全新的可能|拭目以待",
+        "name": "無限可能 / 拭目以待",
+        "fix": "Name the one thing that changes, or cut the sentence."
+      },
+      {
+        "id": "zh-save-bait",
+        "regex": "建議收藏|建议收藏|快筆記起來|快笔记起来|码住|記得\\s*save\\s*低",
+        "name": "建議收藏 reflex",
+        "fix": "Say why someone would come back to this. The reflex ask trains people to ignore it."
+      },
+      {
+        "id": "zh-jinxing",
+        "regex": "(?:進行|进行)了?(?:分析|調整|调整|改善|處理|处理|溝通|沟通|研究|說明|说明)",
+        "name": "進行 + verb",
+        "fix": "Drop 進行 and keep the verb: 分析, 調整, 處理."
+      },
+      {
+        "id": "zh-four-char-triplet",
+        "regex": "[\\u4e00-\\u9fff]{4}、[\\u4e00-\\u9fff]{4}、[\\u4e00-\\u9fff]{4}",
+        "name": "Three four-character phrases in a row",
+        "fix": "Keep the one that is concrete. Triplets of 四字詞 read as a brochure."
+      },
+      {
+        "id": "zh-emoji-bullets",
+        "regex": "(?m)(?:^[ \\t]*(?:✅|🔥|🚀|👉|✨|📌|💡|⭐)\\uFE0F?[ \\t]*\\S[^\\n]*\\n?){3,}",
+        "name": "Emoji-bullet list",
+        "fix": "Write it as sentences, or use plain numbers. Three emoji bullets in a row is the chatbot list."
+      },
+      {
+        "id": "zh-markdown",
+        "regex": "(?m)\\*\\*[^*\\n]+\\*\\*|^#{1,3}[ \\t]",
+        "name": "Markdown in a caption",
+        "fix": "Instagram renders neither bold nor headings. This was pasted from a chatbot."
+      }
+    ]
+  }
 }

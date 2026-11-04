@@ -12,6 +12,8 @@ description: >-
 The control room. Everything else in this pack executes; this decides what gets
 executed. Run it once a week, on the same day.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 ## Input
 
 If `~/.claude/instagram/voice.md`, `swipe.md` and `log.md` exist, read them.

@@ -1,7 +1,7 @@
 # The Instagram agent skill
 
-Thirteen Claude skills that run an Instagram account. Free, MIT, no signup, no
-API key, nothing to connect.
+Thirteen Claude skills that run an Instagram account, plus one for Taiwan and
+Hong Kong. Free, MIT, no signup, no API key, nothing to connect.
 
 One of them writes your Reels off 26 hook formulas and scores the hook before
 you waste a take on it. One goes and finds the reels that are actually working
@@ -69,6 +69,31 @@ out loud.
 | `/ig-dm` | The keyword delivery, the first message, the collab pitch, and the two follow-ups. Two. |
 | `/ig-repurpose` | One video, podcast or newsletter into a week of reels and carousels that each stand alone. |
 | `/ig-audit` | Post-mortem on what you already posted. Ranks by outlier multiple and sends per reach, not views. |
+| `/ig-market` | Taiwan and Hong Kong. Loaded before the others when the audience is there or the copy is Chinese. See below. |
+
+## Taiwan and Hong Kong
+
+The thirteen above were written for an English-speaking, US audience.
+`/ig-market` holds what changes for Taiwan (台灣正體, Mandarin) and Hong Kong
+(written Chinese or Cantonese): lengths in characters, vocabulary that differs
+between the two markets, a commercial calendar, posting-time evidence, the
+advertising and claim rules for food, cosmetics and health products, and
+sponsored-post disclosure. The other skills point to it in one line.
+
+The five tools detect Chinese on their own. They count characters instead of
+words, time Mandarin at 4.5 and Cantonese at 4.3 characters a second, read
+Chinese numbers (三萬元, 四成, HK$380), Chinese stakes words and Chinese
+hashtags, and use a Chinese block in `slop.json` for machine tells. English
+output is unchanged: `python3 tests/check_asia.py` runs every tool on English
+input on this branch and on `main` and requires the same bytes, text and JSON,
+then checks the Chinese behaviour. English text that only contains a Chinese
+name (`Try our 珍珠奶茶 today`) stays on the English path.
+
+What is not verified: where the feed cuts a Chinese caption (estimated at
+about 40 characters; check it on a phone), and the hook formula labels in
+`swipe.py`, which are English-only. Singapore, Malaysia and Simplified
+Chinese work at the tool level, with no market file yet. The research behind
+the numbers, with sources, is in `docs/asia/`.
 
 ## The five tools that actually run
 

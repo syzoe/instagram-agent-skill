@@ -15,6 +15,8 @@ how the people who already follow you decide whether you are a person worth
 buying from, and they are the only surface on Instagram where a tap turns into
 a conversation in one move.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 Nobody outside your followers sees these, so the job is completely different:
 depth, not reach.
 

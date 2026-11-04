@@ -14,6 +14,8 @@ to do badly. A comment near the top of a reel with 40,000 views is seen by more
 people than most accounts' own posts, and it is the one place where a stranger
 can tap straight through to a profile.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 A generic comment is worse than none. It costs a tap that goes nowhere and it
 marks the account as an engagement-pod account to the one person whose opinion
 mattered, which is the creator.

@@ -14,6 +14,8 @@ is another interaction on the post, replies arriving in the first hour do most
 of the work, and on Instagram a reply can also be a Reel, which is the single
 most underused move on the platform.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 But the value is not equal across comments, so this skill sorts before it
 writes.
 

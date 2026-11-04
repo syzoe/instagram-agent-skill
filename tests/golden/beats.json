@@ -1,0 +1,78 @@
+{
+  "wpm": 165,
+  "target": 20.0,
+  "total_seconds": 23.27,
+  "total_words": 64,
+  "beats": [
+    {
+      "n": 1,
+      "start": 0.0,
+      "dur": 2.55,
+      "words": 7,
+      "text": "I lost $18,000 on one missing contract.",
+      "concrete": 2,
+      "label": "HOOK",
+      "flags": []
+    },
+    {
+      "n": 2,
+      "start": 2.55,
+      "dur": 4.73,
+      "words": 13,
+      "text": "The client said yes on a call and I never sent the paperwork.",
+      "concrete": 0,
+      "label": "",
+      "flags": [
+        "4.7s on one beat"
+      ]
+    },
+    {
+      "n": 3,
+      "start": 7.27,
+      "dur": 3.27,
+      "words": 9,
+      "text": "Two months later they said the scope was different.",
+      "concrete": 0,
+      "label": "",
+      "flags": []
+    },
+    {
+      "n": 4,
+      "start": 10.55,
+      "dur": 3.64,
+      "words": 10,
+      "text": "I had nothing in writing, so I ate the cost.",
+      "concrete": 0,
+      "label": "MID",
+      "flags": []
+    },
+    {
+      "n": 5,
+      "start": 14.18,
+      "dur": 3.64,
+      "words": 10,
+      "text": "Now every yes gets a one-page contract inside 24 hours.",
+      "concrete": 1,
+      "label": "",
+      "flags": []
+    },
+    {
+      "n": 6,
+      "start": 17.82,
+      "dur": 5.45,
+      "words": 15,
+      "text": "Comment CONTRACT and I'll send you mine, the one that would have saved me $18,000.",
+      "concrete": 2,
+      "label": "CTA",
+      "flags": [
+        "5.5s on one beat"
+      ]
+    }
+  ],
+  "notes": [
+    "Beat(s) 2, 6 run past 4s. Either split the line or change what is on screen inside it. A static frame is where people leave.",
+    "Beats 2-4 have nothing concrete in them. Put a number, a name or a price in one of them.",
+    "Loops: the last beat repeats \"$18,000, contract\" from the hook. Second watches are free reach.",
+    "3.3s over target. Cut about 9 words."
+  ]
+}

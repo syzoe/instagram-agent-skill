@@ -15,6 +15,8 @@ storefront people browse. It is a **decision screen**, arrived at from one
 reel, and it gets about three seconds to answer one question: is there more of
 that here, and is it for me.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 ## Input
 
 Ask the user to paste or screenshot: the name field, the handle, the bio, what

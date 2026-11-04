@@ -1,0 +1,152 @@
+[
+  {
+    "hook": "I lost $18,000 on one missing contract.",
+    "checks": {
+      "LENGTH": {
+        "score": 100.0,
+        "detail": "7 words, 39 chars, ~2.5s spoken (want 5-12 words)"
+      },
+      "SPECIFICITY": {
+        "score": 75,
+        "detail": "1 concrete marker(s): $18,000"
+      },
+      "STAKES": {
+        "score": 100.0,
+        "detail": "2 tension marker(s): lost, a price"
+      },
+      "FRONTLOAD": {
+        "score": 100.0,
+        "detail": "payload at word 2"
+      },
+      "ADDRESS": {
+        "score": 70.0,
+        "detail": "first person, no viewer named"
+      }
+    },
+    "weakest": "ADDRESS",
+    "flags": [],
+    "score": 81.4,
+    "verdict": "STRONG"
+  },
+  {
+    "hook": "Hey guys, in today's video I'm going to show you my morning routine",
+    "checks": {
+      "LENGTH": {
+        "score": 77,
+        "detail": "13 words, 67 chars, ~4.7s spoken (want 5-12 words)"
+      },
+      "SPECIFICITY": {
+        "score": 15.0,
+        "detail": "0 concrete marker(s) - no number, no name, nothing checkable"
+      },
+      "STAKES": {
+        "score": 20.0,
+        "detail": "0 tension marker(s) - nothing is at stake in this line"
+      },
+      "FRONTLOAD": {
+        "score": 0.0,
+        "detail": "no payload word anywhere in the line; weak opener \"hey\""
+      },
+      "ADDRESS": {
+        "score": 100.0,
+        "detail": "speaks to the viewer"
+      }
+    },
+    "weakest": "FRONTLOAD",
+    "flags": [
+      "Video preamble. Delete it and open on the payoff.",
+      "Greeting. Nobody came to the feed to be greeted."
+    ],
+    "score": 0.0,
+    "verdict": "WEAK"
+  },
+  {
+    "hook": "Stop scrolling, this will change your life",
+    "checks": {
+      "LENGTH": {
+        "score": 100.0,
+        "detail": "7 words, 42 chars, ~2.5s spoken (want 5-12 words)"
+      },
+      "SPECIFICITY": {
+        "score": 15.0,
+        "detail": "0 concrete marker(s) - no number, no name, nothing checkable"
+      },
+      "STAKES": {
+        "score": 70.0,
+        "detail": "1 tension marker(s): stop"
+      },
+      "FRONTLOAD": {
+        "score": 100.0,
+        "detail": "payload at word 1"
+      },
+      "ADDRESS": {
+        "score": 100.0,
+        "detail": "speaks to the viewer"
+      }
+    },
+    "weakest": "SPECIFICITY",
+    "flags": [
+      "Opens with \"stop scrolling\". Asking for attention proves you have not earned it."
+    ],
+    "score": 37.2,
+    "verdict": "WEAK"
+  },
+  {
+    "hook": "Your landing page is losing you 40% of signups before they read a word.",
+    "checks": {
+      "LENGTH": {
+        "score": 66,
+        "detail": "14 words, 71 chars, ~5.1s spoken (want 5-12 words)"
+      },
+      "SPECIFICITY": {
+        "score": 75,
+        "detail": "1 concrete marker(s): 40%"
+      },
+      "STAKES": {
+        "score": 100.0,
+        "detail": "2 tension marker(s): before, losing"
+      },
+      "FRONTLOAD": {
+        "score": 40.0,
+        "detail": "payload at word 5, could move forward; weak opener \"yo\""
+      },
+      "ADDRESS": {
+        "score": 100.0,
+        "detail": "speaks to the viewer"
+      }
+    },
+    "weakest": "FRONTLOAD",
+    "flags": [],
+    "score": 61.7,
+    "verdict": "OK"
+  },
+  {
+    "hook": "Three tools I deleted this year and the one I kept",
+    "checks": {
+      "LENGTH": {
+        "score": 100.0,
+        "detail": "11 words, 50 chars, ~4.0s spoken (want 5-12 words)"
+      },
+      "SPECIFICITY": {
+        "score": 75,
+        "detail": "1 concrete marker(s): three"
+      },
+      "STAKES": {
+        "score": 70.0,
+        "detail": "1 tension marker(s): deleted"
+      },
+      "FRONTLOAD": {
+        "score": 100.0,
+        "detail": "payload at word 1"
+      },
+      "ADDRESS": {
+        "score": 70.0,
+        "detail": "first person, no viewer named"
+      }
+    },
+    "weakest": "STAKES",
+    "flags": [],
+    "score": 77.8,
+    "verdict": "STRONG"
+  }
+]

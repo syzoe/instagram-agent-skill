@@ -13,6 +13,8 @@ description: >-
 One good long asset contains four to six posts. Most people extract one and
 throw the rest away.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 ## Input
 
 A transcript, an article, a newsletter, a script, a call summary, a livestream.

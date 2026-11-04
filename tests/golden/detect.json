@@ -1,0 +1,27 @@
+{
+  "source": "tests/fixtures/en_slop.txt",
+  "checks": {
+    "BURSTINESS": {
+      "score": 29.3,
+      "detail": "variation 0.36 across 5 sentences (want 0.55+)"
+    },
+    "SPECIFICITY": {
+      "score": 0.0,
+      "detail": "0 concrete markers, 0.0 per 100 words (want 4+)"
+    },
+    "SLOP DENSITY": {
+      "score": 0.0,
+      "detail": "16 stock terms, 25.4 per 100 words (a testament to, comprehensive, crucial, delve, ...)"
+    },
+    "FINGERPRINT": {
+      "score": 58.8,
+      "detail": "0 invisible, 1 em dash, 0 curly quote, 0 ellipsis, 0 hard space"
+    },
+    "VOICE": {
+      "score": 62.7,
+      "detail": "7.9 contractions, 3.2 personal pronouns per 100 words, 2 structural tell(s) [not-just, follow-bait]"
+    }
+  },
+  "human_score": 18.1,
+  "verdict": "FLAGGED"
+}

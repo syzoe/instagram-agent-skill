@@ -203,19 +203,104 @@ def restore_capitals(original, text):
                   lambda m: m.group(0)[:-1] + m.group(1).upper(), text)
 
 
+# ---------------------------------------------------------------- Chinese
+# ——, …… and full-width punctuation are correct Chinese typography, and “”
+# is the standard quote in Simplified Chinese, so none of them are rewritten.
+# Only a lone em dash (an English habit inside Chinese) becomes a full-width
+# comma, and slop phrases come from the "zh" block of slop.json.
+sys.path.insert(0, HERE)
+from detect import HAN_RE, TRAD_RE, ZH_SENT_RE, ZH_UNIT_RE, is_cjk  # noqa: E402
+
+# High-frequency characters whose Simplified form is not valid Traditional.
+SIMP_RE = re.compile("[这们说会为时来对还个么国过种样点问题电发开关经应头实学气当进给让]")
+
+
+def pass_typographic_zh(text):
+    hits = []
+    # A lone em dash between two characters is an English habit; a dash
+    # that opens a line is a list bullet and stays.
+    lone = re.compile(r"(?<=[^\s—])[ \t]*—[ \t]*(?=[^\s—])")
+    n = len(lone.findall(text))
+    if n:
+        hits.append({"name": "— EM DASH (single, inside Chinese)", "count": n, "to": "，"})
+        text = lone.sub("，", text)
+    # Taiwan and Hong Kong quote with 「」. “” in Traditional text is the
+    # Simplified-trained default; Simplified text keeps it.
+    if TRAD_RE.search(text) and not SIMP_RE.search(text):
+        n = sum(text.count(c) for c in "“”")     # ’ is also an apostrophe: left alone
+        if n:
+            hits.append({"name": "“” QUOTES (in Traditional text)", "count": n, "to": "「」"})
+            text = text.translate(str.maketrans({"“": "「", "”": "」"}))
+    return text, hits
+
+
+def pass_lexical_zh(text, lex):
+    hits = []
+    entries = sorted(lex.get("zh", {}).get("phrases", []), key=lambda e: len(e["find"]), reverse=True)
+    for entry in entries:
+        if entry["replace"] is None:      # flag-only: reported by scan_structures_zh
+            continue
+        n = text.count(entry["find"])
+        if not n:
+            continue
+        hits.append({"find": entry["find"], "replace": entry["replace"] or "(deleted)",
+                     "count": n, "family": entry["family"]})
+        text = text.replace(entry["find"], entry["replace"])
+    # Deleting a phrase leaves punctuation behind: "，，", "，。", a line
+    # that now opens on a comma.
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    text = re.sub(r"[，、,]\s*([，。！？、；：,.!?])", r"\1", text)
+    text = re.sub(r"([。！？!?])\s*[，、,]+", r"\1", text)
+    text = re.sub(r"(?m)^[ \t]*[，、,；;：:]+", "", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text, hits
+
+
+def scan_structures_zh(text, lex):
+    flags = []
+    for s in lex.get("zh", {}).get("structures", []):
+        try:
+            found = re.compile(s["regex"], re.MULTILINE).findall(text)
+        except re.error:
+            continue
+        if found:
+            flags.append({"name": s["name"], "count": len(found), "fix": s["fix"]})
+    for e in lex.get("zh", {}).get("phrases", []):
+        if e["replace"] is None and e["find"] in text:
+            flags.append({"name": e["find"], "count": text.count(e["find"]),
+                          "fix": e.get("why", "Rewrite this by hand: replacing it changes the meaning.")})
+    # Same sentence measure as detect.py, so the two report the same number.
+    lens = [len(ZH_UNIT_RE.findall(s)) for s in ZH_SENT_RE.findall(text) if len(ZH_UNIT_RE.findall(s)) > 4]
+    if len(lens) >= 4:
+        mean = sum(lens) / len(lens)
+        cv = (sum((n - mean) ** 2 for n in lens) / len(lens)) ** 0.5 / mean if mean else 0
+        if cv < 0.35:
+            flags.append({
+                "name": f"Uniform sentence length (variation {cv:.2f})",
+                "count": len(lens),
+                "fix": "Break one sentence in half. Let another run long. Machines write even.",
+            })
+    return flags
+
+
 def humanize(text, lex):
     raw_for_case = text
+    cjk = is_cjk(text)
     text, urls = protect_urls(text)
     text, inv = pass_invisible(text, lex)
-    text, typo = pass_typographic(text, lex)
-    text, lexi = pass_lexical(text, lex)
-    text = restore_capitals(raw_for_case, text)
+    if cjk:
+        text, typo = pass_typographic_zh(text)
+        text, lexi = pass_lexical_zh(text, lex)
+    else:
+        text, typo = pass_typographic(text, lex)
+        text, lexi = pass_lexical(text, lex)
+        text = restore_capitals(raw_for_case, text)
     text = restore_urls(text, urls)
     return text.strip() + "\n", {
         "invisible": inv,
         "typographic": typo,
         "lexical": lexi,
-        "structures": scan_structures(text, lex),
+        "structures": scan_structures_zh(text, lex) if cjk else scan_structures(text, lex),
     }
 
 

@@ -13,6 +13,8 @@ description: >-
 
 Turns one raw idea into a Reel that somebody finishes.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 Two tools live in this folder and they both actually run. Use them. Do not
 eyeball the hook and do not guess at the length.
 

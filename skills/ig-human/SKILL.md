@@ -14,6 +14,8 @@ description: >-
 Two tools live in this folder and they both actually run. Use them. Do not
 eyeball this.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 ```bash
 python3 humanize.py draft.txt --report        # clean it, show what changed
 python3 detect.py draft.txt                    # score it, five checks
@@ -26,6 +28,15 @@ replacements, 18 invisible character classes, 11 typographic substitutions and
 vocabulary that only shows up in captions and voiceovers. It is meant to be
 edited. If the user has a word they always use that the lexicon strips, take it
 out of the file.
+
+A `zh` block covers Chinese (Taiwan, Hong Kong and Simplified): about 100
+stock phrases and 11 structures. Both tools switch to it when the text is
+mostly Chinese, count characters instead of words, and leave correct Chinese
+typography alone (「」, ——, ……, full-width punctuation); in Traditional
+text “” becomes 「」. One hit proves nothing in Chinese either: rewrite where
+the flags cluster. About 35 Chinese words (打造, 致力於, 解鎖, 旅程, 家人們) are
+ordinary in other sentences, so they are flagged for a hand rewrite and never
+replaced automatically.
 
 ## Why this matters more on Instagram than it looks
 

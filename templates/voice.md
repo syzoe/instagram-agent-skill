@@ -22,6 +22,20 @@ the words out loud. A line you would never say is not a draft, it is a retake.
   not "creatives")
 - **What I sell:**
 
+## Market
+
+Leave this out for a US, English-speaking audience. Fill it in for Taiwan or
+Hong Kong; the `ig-market` skill reads it.
+
+- **Market:** (Taiwan / Hong Kong)
+- **Caption language:** (台灣正體 / Hong Kong written Chinese / Cantonese /
+  mixed with English)
+- **Spoken language on Reels:** (Mandarin / Cantonese / English)
+- **How people buy:** (online / they visit a shop / they book on LINE or
+  WhatsApp)
+- **Regulated category:** (food, health food, supplements, cosmetics,
+  medical or aesthetic, alcohol, finance, or none)
+
 ## What I sound like
 
 - **Three of my own reels or captions that sound most like me:** (paste them)
@@ -33,7 +47,9 @@ the words out loud. A line you would never say is not a draft, it is a retake.
 - **Face on camera:** (always / sometimes / faceless)
 - **Voiceover or to-camera:**
 - **Pace:** (words per minute, if you have timed yourself reading a script.
-  `beats.py --wpm` uses this. Most people are between 150 and 200.)
+  `beats.py --wpm` uses this. Most people are between 150 and 200. For a
+  Chinese script it is characters per minute: about 270 in Mandarin, 258 in
+  Cantonese.)
 
 ## My positions
 

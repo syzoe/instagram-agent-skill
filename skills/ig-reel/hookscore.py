@@ -32,9 +32,13 @@ Usage
 
 import argparse
 import json
+import os
 import re
 import statistics
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import zh  # noqa: E402  Chinese units, lexicons and rates
 
 WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
 NUMBER_RE = re.compile(
@@ -210,18 +214,116 @@ def check_address(text):
     return 35.0, "third person, nobody in the room"
 
 
+# ---------------------------------------------------------------- Chinese
+# Same five checks, measured in characters (zh.HOOK_CHARS) instead of words.
+
+
+def zh_length(text):
+    n = len(zh.units(text))
+    lang = zh.variety(text)
+    secs = n / zh.RATE[lang]
+    lo, hi = zh.HOOK_CHARS[lang]
+    per = zh.PER_CHAR[lang]               # English penalties are per word
+    if lo <= n <= hi:
+        score = 100.0
+    elif n < lo:
+        score = clamp(100 - (lo - n) * 20 / per)
+    else:
+        score = clamp(100 - (n - hi) * 11 / per)
+    width = sum(2 if zh.HAN_RE.match(ch) else 1 for ch in text.strip())
+    if width > 60:                       # two lines of big on-screen text
+        score -= 12
+    want = f"{lo}-{hi}"
+    return clamp(score), f"{n} characters, ~{secs:.1f}s spoken in {'Cantonese' if lang == 'yue' else 'Mandarin'} (want {want})"
+
+
+def zh_specificity(text):
+    nums = [m.group(0).strip() for m in zh.NUMBER_RE.finditer(text) if m.group(0).strip()]
+    names = sorted(set(zh.NAME_RE.findall(text)) | set(zh.PLACE_RE.findall(text)))
+    hits = len(nums) + len(names)
+    score = 15.0 if hits == 0 else clamp(45 + hits * 30)
+    found = ", ".join(nums[:2] + names[:2])
+    return score, (f"{hits} concrete marker(s)" + (f": {found}" if found else
+                   " - no number, no name, nothing checkable"))
+
+
+def zh_stakes(text):
+    markers = sorted(set(zh.STAKES_RE.findall(text)))
+    if zh.PRICE_RE.search(text):
+        markers.append("a price")
+    n = len(markers)
+    score = {0: 20.0, 1: 70.0}.get(n, 100.0)
+    detail = f"{n} tension marker(s)" + (f": {', '.join(markers[:4])}" if markers else
+                                         " - nothing is at stake in this line")
+    return clamp(score), detail
+
+
+def zh_frontload(text):
+    t = text.strip()
+    if not zh.units(t):
+        return 0.0, "empty"
+    rate = zh.RATE[zh.variety(t)]
+    penalty, hit_opener = 0, None
+    for weak in zh.WEAK_OPENERS:
+        if t.startswith(weak):
+            penalty, hit_opener = 30, weak
+            break
+    starts = [m.start() for rx in (zh.STAKES_RE, zh.NUMBER_RE, zh.NAME_RE, zh.PLACE_RE)
+              for m in rx.finditer(t) if m.group(0).strip()]
+    if not starts:
+        base, where = 30.0, "no payload word anywhere in the line"
+    else:
+        before = zh.units_before(t, min(starts))
+        secs = before / rate
+        if secs <= 3 / 2.75:
+            base, where = 100.0, f"payload at character {before + 1}"
+        elif secs <= 6 / 2.75:
+            base, where = 70.0, f"payload at character {before + 1}, could move forward"
+        else:
+            base, where = 40.0, f"payload at character {before + 1}, too late"
+    detail = where + (f"; weak opener \"{hit_opener}\"" if hit_opener else "")
+    return clamp(base - penalty), detail
+
+
+def zh_address(text):
+    t = text.strip()
+    if zh.VIEWER_RE.search(t):
+        return 100.0, "speaks to the viewer"
+    imp = zh.IMPERATIVE_RE.match(t)
+    if imp:
+        return 90.0, f"imperative opener (\"{imp.group(0).strip()}\")"
+    if zh.QUESTION_RE.search(t):
+        return 85.0, "asks the viewer a question (Chinese drops the 你)"
+    if zh.CROWD_RE.search(t):
+        return 85.0, "speaks to a crowd (大家), not one viewer"
+    if zh.FIRST_RE.search(t):
+        return 70.0, "first person, no viewer named"
+    return 35.0, "third person, nobody in the room"
+
+
 CHECKS = ["LENGTH", "SPECIFICITY", "STAKES", "FRONTLOAD", "ADDRESS"]
 
 
 def run(text):
-    results = {
-        "LENGTH": check_length(text),
-        "SPECIFICITY": check_specificity(text),
-        "STAKES": check_stakes(text),
-        "FRONTLOAD": check_frontload(text),
-        "ADDRESS": check_address(text),
-    }
-    flags = [msg for pattern, msg in DEALBREAKERS if pattern.search(text)]
+    if zh.is_cjk(text):
+        results = {
+            "LENGTH": zh_length(text),
+            "SPECIFICITY": zh_specificity(text),
+            "STAKES": zh_stakes(text),
+            "FRONTLOAD": zh_frontload(text),
+            "ADDRESS": zh_address(text),
+        }
+        rules = zh.DEALBREAKERS + [d for d in DEALBREAKERS if d[0] is EMOJI_RE]
+    else:
+        results = {
+            "LENGTH": check_length(text),
+            "SPECIFICITY": check_specificity(text),
+            "STAKES": check_stakes(text),
+            "FRONTLOAD": check_frontload(text),
+            "ADDRESS": check_address(text),
+        }
+        rules = DEALBREAKERS
+    flags = [msg for pattern, msg in rules if pattern.search(text)]
     scores = [results[c][0] for c in CHECKS]
     # The weakest property caps the hook, same logic as detect.py: one bad
     # property is enough for the thumb to keep moving.

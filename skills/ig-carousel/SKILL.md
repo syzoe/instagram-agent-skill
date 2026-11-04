@@ -14,6 +14,8 @@ interaction and a scroll is not. They also get a second chance: Instagram can
 show a carousel again starting from a later slide to someone who did not engage
 the first time, so slide two has to stand on its own as well.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 The format rewards one idea broken into steps. It punishes a caption cut into
 pieces.
 

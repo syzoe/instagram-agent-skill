@@ -26,9 +26,14 @@ import json
 import re
 import sys
 import textwrap
+import unicodedata
 
 LIMIT = 2200             # Instagram's hard caption limit.
 TRUNCATE = 125           # Roughly where the feed cuts to "... more".
+ZH_TRUNCATE = 40         # Chinese characters (each takes the width of two Latin ones).
+                         # UNVERIFIED: no published figure exists. Estimate from
+                         # two feed lines of ~20 characters; check it by posting a
+                         # numbered test caption and reading where 更多 lands.
 HASHTAG_LIMIT = 5        # Instagram's cap per post or reel since 18 Dec 2025,
                          # down from 30. Announced by the @Creators account:
                          # "using fewer (up to 5) more targeted hashtags,
@@ -36,6 +41,7 @@ HASHTAG_LIMIT = 5        # Instagram's cap per post or reel since 18 Dec 2025,
                          # content's performance and people's experience".
 
 HASHTAG_RE = re.compile(r"(?:^|\s)(#[A-Za-z0-9_]+)")
+ZH_HASHTAG_RE = re.compile(r"(?:^|\s)(#\w+)")   # Chinese captions: #台北美食 is one tag
 MENTION_RE = re.compile(r"(?:^|\s)(@[A-Za-z0-9_.]+)")
 LINK_RE = re.compile(r"https?://\S+|\bwww\.\S+|\b[a-z0-9-]+\.(?:com|co|io|net|org|ai|app)/\S*",
                      re.IGNORECASE)
@@ -56,40 +62,119 @@ ASKS = [
 FILLER_TAGS = {"#viral", "#fyp", "#explore", "#explorepage", "#foryou", "#foryoupage",
                "#trending", "#instagood", "#love", "#follow", "#like4like", "#reels",
                "#reelsinstagram", "#viralreels", "#instadaily"}
+# Chinese tags that say nothing about the topic (Chinese captions only).
+ZH_FILLER_TAGS = {"#日常", "#生活", "#分享", "#推薦", "#推荐", "#熱門", "#热门", "#爆紅", "#爆红",
+                  "#好物分享", "#ig", "#igdaily", "#tw", "#hk"}
+
+# Chinese captions. Kept in this file, not imported, so ig-caption still runs
+# when it is copied on its own.
+HAN_RE = re.compile("[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
+ZH_CONCRETE_RE = re.compile(
+    r"(?:HK|NT|US|S)?[$＄]?\s?[0-9０-９][0-9０-９,，.]*"
+    r"|[兩两二三四五六七八九十百千萬万億亿半幾几][兩两二三四五六七八九十百千萬万億亿一]*"
+    r"(?:萬|万|千|百|億|亿|元|塊|块|蚊|個|个|天|日|週|周|個月|月|年|小時|分鐘|倍|成|折|人|條|条|片|間|家|克|件|%)"
+    r"|(?<![A-Za-z])[A-Z][A-Za-z0-9]+")
+ZH_ASKS = [
+    (re.compile(r"留言\s*(?:「[^」]{1,12}」|“[^”]{1,12}”|\+1|[A-Za-z0-9]{2,})"), "comment a keyword"),
+    (re.compile(r"(?:私訊|私信|[Pp][Mm]|[Ii]nbox|DM|dm)\s*(?:我|小盒子)"), "DM me"),
+    (re.compile(r"[Ww]hats[Aa]pp|WA我"), "message on WhatsApp"),
+    (re.compile(r"收藏|先存|存起來|存起来|儲起|save低"), "save this"),
+    (re.compile(r"分享給|分享给|轉發|转发|標記|标记|[Tt]ag\s*(?:你|一個|一个|朋友)"), "share this"),
+    (re.compile(r"追蹤|關注|关注|[Ff]ollow\s*我"), "follow"),
+    (re.compile(r"(?:連結|链接|[Ll]ink)\s*(?:在|喺)?\s*(?:個人|个人)?(?:簡介|简介|主頁|主页|[Bb]io)|[Bb]io\s*(?:有|link)|撳\s*bio|睇\s*[Bb]io"),
+     "link in bio"),
+    (re.compile(r"加\s*(?:入)?\s*LINE|加\s*[Ll]ine"), "add on LINE"),
+    (re.compile(r"(?:往|向)?[左右]滑|滑到最後|滑到最后|碌到最尾"), "swipe or tap"),
+    (re.compile(r"告訴我|告诉我|話我知|你會選|你会选|你揀|邊一個|哪一個|哪一个|你覺得呢|你觉得呢|你點睇"),
+     "answer a question"),
+]
 
 
-def visible_window(text, cut):
-    """What the feed shows. Instagram cuts mid-word, so this does too."""
+def is_cjk(text):
+    """Same rule as ig-reel/zh.py: two or more Han characters, and more than
+    twice as many as Latin words. Copied so ig-caption runs on its own."""
+    han = len(HAN_RE.findall(text))
+    return han >= 2 and han > 2 * len(re.findall(r"[A-Za-z]+", text))
+
+
+# With the rest of the pack installed, Chinese numbers, names and places come
+# from ig-reel/zh.py so all the tools agree; on its own, the regex above.
+try:
+    import os as _os
+    sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "ig-reel"))
+    import zh as _zh
+    ZH_CONCRETE_RE = re.compile("|".join(f"(?:{r.pattern})" for r in (_zh.NUMBER_RE, _zh.NAME_RE, _zh.PLACE_RE)))
+except Exception:
+    pass
+
+
+def width(text):
+    """Display width: a Chinese character takes the room of two Latin ones."""
+    return sum(2 if unicodedata.east_asian_width(ch) in "WF" else 1 for ch in text)
+
+
+def wrap_width(raw, limit):
+    lines, cur = [], ""
+    for ch in raw:
+        if width(cur + ch) > limit:
+            lines.append(cur)
+            cur = ""
+        cur += ch
+    return lines + [cur]
+
+
+def visible_window(text, cut, cjk=False):
+    """What the feed shows. Instagram cuts mid-word, so this does too.
+    Chinese is cut by width: the feed has room for about half as many Han
+    characters as Latin ones."""
     flat = text.strip()
-    return flat if len(flat) <= cut else flat[:cut]
+    if not cjk:
+        return flat if len(flat) <= cut else flat[:cut]
+    out = ""
+    for ch in flat:
+        if width(out + ch) > cut * 2:       # cut is in Chinese characters
+            break
+        out += ch
+    return out
 
 
-def render_box(window, truncated, out=sys.stdout, width=52):
+def render_box(window, truncated, out=sys.stdout, box=52):
     print("\n  WHAT THE FEED SHOWS", file=out)
-    print("  +" + "-" * (width + 2) + "+", file=out)
+    print("  +" + "-" * (box + 2) + "+", file=out)
     lines = []
     for raw in window.split("\n"):
-        lines.extend(textwrap.wrap(raw, width) or [""])
+        if is_cjk(raw):
+            lines.extend(wrap_width(raw, box))
+        else:
+            lines.extend(textwrap.wrap(raw, box) or [""])
     for line in lines[:8]:
-        print(f"  | {line:<{width}} |", file=out)
+        if is_cjk(line):
+            print(f"  | {line}{' ' * max(0, box - width(line))} |", file=out)
+        else:
+            print(f"  | {line:<{box}} |", file=out)
     tail = "... more" if truncated else "(whole caption fits)"
-    print("  +" + "-" * (width + 2 - len(tail) - 2) + f" {tail} " + "+", file=out)
+    print("  +" + "-" * (box + 2 - len(tail) - 2) + f" {tail} " + "+", file=out)
 
 
-def analyse(text, cut=TRUNCATE, keywords=None):
+def analyse(text, cut=None, keywords=None):
     text = text.rstrip()
     stripped = text.strip()
     chars = len(stripped)
     lines = [l for l in stripped.split("\n")]
     first_line = lines[0].strip() if lines else ""
-    tags = HASHTAG_RE.findall(stripped)
+    cjk = is_cjk(stripped)
+    tags = (ZH_HASHTAG_RE if cjk else HASHTAG_RE).findall(stripped)
     mentions = MENTION_RE.findall(stripped)
     links = LINK_RE.findall(stripped)
     emoji = EMOJI_RE.findall(stripped)
-    window = visible_window(stripped, cut)
-    truncated = chars > cut
+    if cut is None:
+        cut = ZH_TRUNCATE if cjk else TRUNCATE
+    window = visible_window(stripped, cut, cjk)
+    truncated = (width(stripped) > cut * 2) if cjk else chars > cut
     asks = [name for pattern, name in ASKS if pattern.search(stripped)]
-    filler = [t for t in tags if t.lower() in FILLER_TAGS]
+    if cjk:
+        asks += [name for pattern, name in ZH_ASKS if pattern.search(stripped) and name not in asks]
+    filler = [t for t in tags if t.lower() in (FILLER_TAGS | ZH_FILLER_TAGS if cjk else FILLER_TAGS)]
     keywords = [k.strip() for k in (keywords or []) if k.strip()]
 
     checks = []
@@ -106,16 +191,17 @@ def analyse(text, cut=TRUNCATE, keywords=None):
     elif first_line.startswith("#") or first_line.startswith("@"):
         add("FIRST LINE", "FAIL",
             "opens on a hashtag or a mention, which is the one position worth a sentence")
-    elif len(first_line) > cut:
+    elif (width(first_line) > cut * 2) if cjk else len(first_line) > cut:
         add("FIRST LINE", "WARN",
-            f"{len(first_line)} characters, so it gets cut at {cut} mid-thought. "
+            f"{len(first_line)} characters, so it gets cut at {len(window)} mid-thought. "
             "Fine if the cut is a cliffhanger, bad if it is a subordinate clause")
     else:
         add("FIRST LINE", "PASS", f"{len(first_line)} characters, lands whole")
 
-    add("HOOK IS CONCRETE", "PASS" if CONCRETE_RE.search(window) else "WARN",
-        f"{len(CONCRETE_RE.findall(window))} number(s) or name(s) in the visible window"
-        + ("" if CONCRETE_RE.search(window) else " - nothing checkable before the tap"))
+    concrete = ZH_CONCRETE_RE if cjk else CONCRETE_RE
+    add("HOOK IS CONCRETE", "PASS" if concrete.search(window) else "WARN",
+        f"{len(concrete.findall(window))} number(s) or name(s) in the visible window"
+        + ("" if concrete.search(window) else " - nothing checkable before the tap"))
 
     if len(tags) > HASHTAG_LIMIT:
         add("HASHTAGS", "FAIL", f"{len(tags)} tags, over Instagram's cap of {HASHTAG_LIMIT}. "
@@ -149,7 +235,7 @@ def analyse(text, cut=TRUNCATE, keywords=None):
         add("ONE ASK", "WARN", f"{len(asks)} asks ({', '.join(asks)}). "
                                "Two asks is the same as none")
 
-    density = len(emoji) * 100 / max(chars, 1)
+    density = len(emoji) * 100 / max(width(stripped) if cjk else chars, 1)
     add("EMOJI", "WARN" if density > 4 else "PASS",
         f"{len(emoji)} emoji, {density:.1f} per 100 characters"
         + (" - reads as decoration" if density > 4 else ""))
@@ -195,8 +281,9 @@ def render(a, out=sys.stdout):
 def main():
     ap = argparse.ArgumentParser(description="Lint an Instagram caption.")
     ap.add_argument("input", nargs="?", default="-", help="caption file, or - for stdin")
-    ap.add_argument("--truncate", type=int, default=TRUNCATE,
-                    help=f"characters shown before '... more' (default {TRUNCATE})")
+    ap.add_argument("--truncate", type=int, default=None,
+                    help=f"characters shown before '... more' (default {TRUNCATE}; "
+                         f"{ZH_TRUNCATE} for a Chinese caption)")
     ap.add_argument("--keywords", default="", help="comma-separated terms you want to be found for")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()

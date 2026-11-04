@@ -15,6 +15,8 @@ description: >-
 The research skill. Everything else in this pack writes; this one goes and
 looks. Run it monthly, not daily. Formulas last a season.
 
+**Taiwan, Hong Kong or Chinese copy:** load the `ig-market` skill first. Its lengths, vocabulary, calendar and claim rules replace the US defaults in this skill.
+
 One tool lives in this folder and it runs:
 
 ```bash
@@ -117,7 +119,10 @@ python3 swipe.py captured.tsv --out ~/.claude/instagram/swipe.md
 
 It computes the outlier multiple, names the hook formula using the same 26
 formulas `/ig-reel` writes from, scores each hook with `hookscore.py`, and
-prints what separates the top third from the bottom third.
+prints what separates the top third from the bottom third. Chinese hooks are
+ranked, timed and scored the same way, but the formula names come from English
+patterns, so they print as unclassified: label those by hand against
+`ig-reel/hooks.json` before writing the swipe file.
 
 ## Step 4: say what it means, carefully
 
